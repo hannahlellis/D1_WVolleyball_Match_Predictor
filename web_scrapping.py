@@ -5,35 +5,24 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Web scrapping of url
-headers = {"User-Agent": "Mozilla/5.0"}  # Respectful header
-
 # Step 1: Fetch the webpage
 url = "https://www.ncaa.com/stats/volleyball-women/d1/current/team/45"
 response = requests.get(url)
+html_content = response.text
 
-# Check that the request was successful
-if response.status_code == 200:
-    html_content = response.text
+# Step 2: Parse the HTML content
+soup = BeautifulSoup(html_content, 'html.parser')
 
-    # Step 2: Parse the HTML content
-    soup = BeautifulSoup(html_content, 'html.parser')
+# Step 3: Find relevant data
+stats_table = soup.find('div', class_='stats-wrap')
+header_row = soup.find_all('th')
+data_rows = soup.find_all('td')
 
-    # Step 3: Extract specific elements
-    # Example: Get all links
-    links = soup.find_all('a')
-    for link in links:
-        print(link.get('href'))  # Print href attributes
-
-    # Example: Get text of a specific CSS class
-    headings = soup.find_all('h2', class_='title')
-    for heading in headings:
-        print(heading.get_text())
-else:
-    print(f"Failed to retrieve the page. Status code: {response.status_code}")
-
-# Data extraction and cleaning
-
+# Step X: Extract relevant data
+header_values = [header.get_text(strip=True) for header in header_row]
+data_values = [data.get_text(strip=True) for data in data_rows]
+print("Headers:", header_values)
+print("Data Values:", data_values)
 
 # Data storage
 

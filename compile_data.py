@@ -1,7 +1,15 @@
 from web_scrapping import scrape_ncaa_volleyball_stats
 
 # Win-Loss Percentage is output. Select input catergories to pull.
-catergory_names = ['Hitting Percentage', 'Match W-L Pctg.']
+catergory_names = [
+    'Hitting Percentage',
+    'Kills Per Set', 
+    'Assists Per Set', 
+    'Blocks Per Set',
+    'Opposing Hitting Pctg',
+    'Match W-L Pctg.'
+    ]
+
 for catergory in catergory_names:
 
     temp_data = scrape_ncaa_volleyball_stats(catergory)

@@ -22,8 +22,9 @@ This project uses the below team stats to predict a team's Win-Loss Percentage.
 - `_.py` - Will implement machine learning model to predict team Win-Loss percentage
 
 ## Usage
-Run the _.py script:
-python3 _.py
+To scrape data and save as csv files run: compile.py 
+To train the model run: __.py
+To make predictions run: __.py
 
 Expected output:
 "Example output here"

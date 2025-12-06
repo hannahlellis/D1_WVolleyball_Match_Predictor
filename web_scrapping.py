@@ -1,7 +1,6 @@
     # Web Scrapping to Pull D1 Women's Volleyball Stats from NCAA Website
     # https://www.ncaa.com/robots.txt
 
-
 # Import necessary libraries
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +8,7 @@ import pandas as pd
 import time
 
 def scrape_ncaa_volleyball_stats(catergory_name):
+    header_values = []
 
     catergories = {
         'Hitting Percentage' : '45', 
@@ -27,6 +27,10 @@ def scrape_ncaa_volleyball_stats(catergory_name):
     catergory = catergories[catergory_name]
     data_df = pd.DataFrame()
 
+    header_values = []
+    data_values = []
+
+    print(f"Web Scraping Category: {catergory_name}...")
     for url in url_revisions:
         
         response = requests.get(url_main + catergory + url)
@@ -44,12 +48,29 @@ def scrape_ncaa_volleyball_stats(catergory_name):
         data_values = [data.get_text(strip=True) for data in data_rows]
         header_values = [header.get_text(strip=True) for header in header_row]
 
-        # Store relevant data
-        temp_data_df = pd.DataFrame([data_values[i:i+7] for i in range(0, len(data_values), len(header_values))])
-        data_df = pd.concat([data_df, temp_data_df], ignore_index=True)
-        data_df.columns = header_values
-        # Wait
-        time.sleep(5)  # Be respectful to the server
+        # Guard against empty headers and data
+        if not header_values:
+            print(f"Warning: No headers found for {url}. Skipping...")
+            continue
 
-    # Return DataFrame
+        if not data_values:
+            print(f"Warning: No data found for {url}. Skipping...")
+            continue
+
+        # Store relevant data
+        temp_data_df = pd.DataFrame([data_values[i:i+len(header_values)] for i in range(0, len(data_values), len(header_values))])
+        data_df = pd.concat([data_df, temp_data_df], ignore_index=True)
+
+        print(f"DataFrame size for catergory {catergory_name}: {data_df.shape[0]} rows and {data_df.shape[1]} columns")
+
+        if url == "/p7":
+            data_df.columns = header_values
+
+        # Wait
+        time.sleep(3)  # Be respectful to the server
+    
+    #Rename relevant columns
+    data_df.drop(columns=['Rank'], inplace=True)
+    
+    # Return DataFrame with column names              
     return data_df

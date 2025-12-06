@@ -1,4 +1,5 @@
 from web_scrapping import scrape_ncaa_volleyball_stats
+import pandas as pd
 
 # Win-Loss Percentage is output. Select input catergories to pull.
 catergory_names = [
@@ -11,9 +12,9 @@ catergory_names = [
     ]
 
 for catergory in catergory_names:
-
+    print(f"Compile Category: {catergory}")
     temp_data = scrape_ncaa_volleyball_stats(catergory)
-
+  
     if catergory == 'Hitting Percentage':
         data_hp = temp_data
     elif catergory == 'Kills Per Set':
@@ -28,7 +29,11 @@ for catergory in catergory_names:
         data_wlp = temp_data
 
 # Combine input(s) and output into single DataFrame for model training
-data = data_hp + data_kps + data_aps + data_bps + data_ohp + data_wlp
+combined_data_df = data_hp
+combined_data_df = pd.merge(combined_data_df, data_kps, on='Team', suffixes=('', '_KPS'))
+combined_data_df = pd.merge(combined_data_df, data_aps, on='Team', suffixes=('', '_APS'))
+combined_data_df = pd.merge(combined_data_df, data_bps, on='Team', suffixes=('', '_BPS'))
+combined_data_df = pd.merge(combined_data_df, data_ohp, on='Team', suffixes=('', '_OHP'))
+combined_data_df = pd.merge(combined_data_df, data_wlp, on='Team', suffixes=('', '_WLP'))
 
-print(data)
-
+combined_data_df.to_csv('combined_data.csv', index=False)

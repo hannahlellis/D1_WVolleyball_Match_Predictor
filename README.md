@@ -17,14 +17,14 @@ This project uses the below team stats to predict a team's Win-Loss Percentage.
 - Opposing Hitting Percentage
 
 ## Project Structure
-- `web_scrapping.py` - Scrapes the NCAA website for team statistics
+- `web_scraping.py` - Scrapes the NCAA website for team statistics
 - `compile_data.py` - Compiles scraped data into a single pandas DataFrame
-- `_.py` - Will implement machine learning model to predict team Win-Loss percentage
+- `predictions.py` - Trains the model and visualizes results
 
 ## Usage
-To scrape data and save as csv files run: compile.py 
-To train the model run: __.py
-To make predictions run: __.py
+- To scrape data and save CSV files: `python compile_data.py`
+- To train and visualize model results: `python predictions.py`
 
 Expected output:
-"Example output here"
+- `combined_data.csv` (compiled dataset)
+- `feature_importances.png` and `pred_vs_actual.png` (plots)

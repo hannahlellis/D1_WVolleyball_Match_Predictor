@@ -1,4 +1,4 @@
-    # Web Scrapping to Pull D1 Women's Volleyball Stats from NCAA Website
+    # Web Scraping to Pull D1 Women's Volleyball Stats from NCAA Website
     # https://www.ncaa.com/robots.txt
 
 # Import necessary libraries
@@ -7,33 +7,33 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-def scrape_ncaa_volleyball_stats(catergory_name):
+def scrape_ncaa_volleyball_stats(category_name):
     header_values = []
 
-    catergories = {
-        'Hitting Percentage' : '45', 
-        'Kills Per Set' : '46',
-        'Assists Per Set' : '47',
-        'Blocks Per Set' : '49',
-        'Opposing Hitting Pctg' : '911', 
-        'Match W-L Pctg.' : '51',
-        }
+    categories = {
+        'Hitting Percentage': '45',
+        'Kills Per Set': '46',
+        'Assists Per Set': '47',
+        'Blocks Per Set': '49',
+        'Opposing Hitting Pctg': '911',
+        'Match W-L Pctg.': '51',
+    }
 
     # Step 1: Fetch the webpage
     url_main = "https://www.ncaa.com/stats/volleyball-women/d1/current/team/"
     url_revisions = ["", "/p2", "/p3", "/p4", "/p5", "/p6", "/p7"]
 
-    # Step 2: Scrape website for data from specified catergory
-    catergory = catergories[catergory_name]
+    # Step 2: Scrape website for data from specified category
+    category = categories[category_name]
     data_df = pd.DataFrame()
 
     header_values = []
     data_values = []
 
-    print(f"Web Scraping Category: {catergory_name}...")
+    print(f"Web Scraping Category: {category_name}...")
     for url in url_revisions:
         
-        response = requests.get(url_main + catergory + url)
+        response = requests.get(url_main + category + url)
         html_content = response.text
 
         # Parse the HTML content
@@ -61,7 +61,7 @@ def scrape_ncaa_volleyball_stats(catergory_name):
         temp_data_df = pd.DataFrame([data_values[i:i+len(header_values)] for i in range(0, len(data_values), len(header_values))])
         data_df = pd.concat([data_df, temp_data_df], ignore_index=True)
 
-        print(f"DataFrame size for catergory {catergory_name}: {data_df.shape[0]} rows and {data_df.shape[1]} columns")
+        print(f"DataFrame size for category {category_name}: {data_df.shape[0]} rows and {data_df.shape[1]} columns")
 
         if url == "/p7":
             data_df.columns = header_values

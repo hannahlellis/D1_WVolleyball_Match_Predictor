@@ -1,39 +1,42 @@
-from web_scrapping import scrape_ncaa_volleyball_stats
+from web_scraping import scrape_ncaa_volleyball_stats
 import pandas as pd
 
-# Win-Loss Percentage is output. Select input catergories to pull.
-catergory_names = [
+# Win-Loss Percentage is output. Select input categories to pull.
+category_names = [
     'Hitting Percentage',
-    'Kills Per Set', 
-    'Assists Per Set', 
+    'Kills Per Set',
+    'Assists Per Set',
     'Blocks Per Set',
     'Opposing Hitting Pctg',
     'Match W-L Pctg.'
-    ]
+]
 
-for catergory in catergory_names:
-    print(f"Compile Category: {catergory}")
-    temp_data = scrape_ncaa_volleyball_stats(catergory)
-  
-    if catergory == 'Hitting Percentage':
-        data_hp = temp_data
-    elif catergory == 'Kills Per Set':
-        data_kps = temp_data
-    elif catergory == 'Assists Per Set':
-        data_aps = temp_data
-    elif catergory == 'Blocks Per Set':
-        data_bps = temp_data
-    elif catergory == 'Opposing Hitting Pctg':
-        data_ohp = temp_data
-    elif catergory == 'Match W-L Pctg.':
-        data_wlp = temp_data
+# Map long category names to short keys we will use in a dict
+key_map = {
+    'Hitting Percentage': 'hp',
+    'Kills Per Set': 'kps',
+    'Assists Per Set': 'aps',
+    'Blocks Per Set': 'bps',
+    'Opposing Hitting Pctg': 'ohp',
+    'Match W-L Pctg.': 'wlp',
+}
 
-# Combine input(s) and output into single DataFrame for model training
-combined_data_df = data_hp
-combined_data_df = pd.merge(combined_data_df, data_kps, on='Team', suffixes=('', '_KPS'))
-combined_data_df = pd.merge(combined_data_df, data_aps, on='Team', suffixes=('', '_APS'))
-combined_data_df = pd.merge(combined_data_df, data_bps, on='Team', suffixes=('', '_BPS'))
-combined_data_df = pd.merge(combined_data_df, data_ohp, on='Team', suffixes=('', '_OHP'))
-combined_data_df = pd.merge(combined_data_df, data_wlp, on='Team', suffixes=('', '_WLP'))
+dataframes = {}
+for category in category_names:
+    print(f"Compile Category: {category}")
+    dataframes[key_map[category]] = scrape_ncaa_volleyball_stats(category)
+
+merge_order = ['hp', 'kps', 'aps', 'bps', 'ohp', 'wlp']
+suffix_map = {'kps': '_KPS', 'aps': '_APS', 'bps': '_BPS', 'ohp': '_OHP', 'wlp': '_WLP'}
+
+combined_data_df = dataframes[merge_order[0]]
+for key in merge_order[1:]:
+    combined_data_df = pd.merge(
+        combined_data_df,
+        dataframes[key],
+        on='Team',
+        suffixes=('', suffix_map.get(key, '')),
+        how='inner',
+    )
 
 combined_data_df.to_csv('combined_data.csv', index=False)
